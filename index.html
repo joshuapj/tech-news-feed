@@ -287,7 +287,6 @@
 
     <main class="container">
         <div id="feedContainer" class="feed-container">
-            <!-- Feed items will be dynamically inserted here -->
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>Loading articles...</p>
@@ -313,13 +312,13 @@
         </div>
     </footer>
 
+    <!-- Load Supabase first -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        // Configuration - Replace with your actual Supabase credentials
+        // Replace these with your actual Supabase credentials
         const SUPABASE_URL = 'https://buoafoxhmczkpjahrsdv.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1b2Fmb3hobWN6a3BqYWhyc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MjMyMzEsImV4cCI6MjA3NDQ5OTIzMX0.DtA50dFwOTk-jh0dl8n8r3h-VwYqBe2XZIzQY0AOPso';
-
-        // Initialize Supabase client
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // DOM elements
         const feedContainer = document.getElementById('feedContainer');
@@ -342,7 +341,17 @@
                     </div>
                 `;
 
-                let query = supabaseClient
+                // Check if Supabase credentials are configured
+                if (SUPABASE_URL.includes('your-project') || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+                    throw new Error('Please configure your Supabase credentials in the script tag');
+                }
+
+                // Initialize Supabase client
+                if (!window.supabaseClient) {
+                    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                }
+
+                let query = window.supabaseClient
                     .from('tech_feed_items')
                     .select('*')
                     .order('pub_date', { ascending: false });
@@ -405,7 +414,7 @@
                 feedContainer.innerHTML = `
                     <div class="loading">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>Error loading articles. Please try again later.</p>
+                        <p>Error loading articles: ${error.message}</p>
                     </div>
                 `;
             }
@@ -420,13 +429,13 @@
             }, 300);
         });
 
-        // Initial load
+        // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            fetchFeedItems();
+            // Wait a bit to ensure Supabase is loaded
+            setTimeout(() => {
+                fetchFeedItems();
+            }, 100);
         });
     </script>
-
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
