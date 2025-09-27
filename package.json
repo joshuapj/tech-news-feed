@@ -1,0 +1,11 @@
+{
+  "name": "tech-feed",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && serve dist"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
